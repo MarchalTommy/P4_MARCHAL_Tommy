@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Ma réu</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="room_color">Room Color</string>
+
+    <string-array name="Room">
+        <item>Select a room</item>
+        <item>Room 1</item>
+        <item>Room 2</item>
+        <item>Room 3</item>
+        <item>Room 4</item>
+        <item>Room 5</item>
+        <item>Room 6</item>
+        <item>Room 7</item>
+        <item>Room 8</item>
+        <item>Room 9</item>
+        <item>Room 10</item>
+    </string-array>
+
+    <string-array name="Users">
+        <item>Select users</item>
+        <item>Anthony</item>
+        <item>Linda</item>
+        <item>Marcel</item>
+        <item>Elodie</item>
+        <item>Alfred</item>
+        <item>Léa</item>
+        <item>George</item>
+        <item>Ginette</item>
+        <item>Hubert</item>
+        <item>Jean</item>
+        <item>Jack</item>
+        <item>Vincent</item>
+        <item>Lena</item>
+        <item>Aria</item>
+        <item>Louise</item>
+    </string-array>
+</resources>

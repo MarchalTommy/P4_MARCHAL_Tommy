@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.aki.mareu.Fragment_Reunion"
+        android:label="fragment_first"
+        tools:layout="@layout/fragment_reunion_list" >
+        <action
+            android:id="@+id/action_mainFragment_to_addReunionFragment"
+            app:destination="@id/addReunionFragment"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addReunionFragment"
+        android:name="com.aki.mareu.Fragment_AddReunion"
+        android:label="fragment_second"
+        tools:layout="@layout/fragment_addreunion" >
+        <action
+            android:id="@+id/action_addReunionFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"/>
+    </fragment>
+
+</navigation>

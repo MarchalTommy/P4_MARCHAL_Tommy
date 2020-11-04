@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#4E92DF</color>
+    <color name="colorPrimaryDark">#3F7ABD</color>
+    <color name="colorAccent">#CE0A24</color>
+    <color name="colorBackground">#EBEFF0</color>
+    <color name="colorRoom1">#EDD9D0</color>
+    <color name="colorRoom2">#AECEB8</color>
+    <color name="colorRoom3">#E1C0B3</color>
+    <color name="colorRoom4">#95BFA4</color>
+    <color name="colorRoom5">#E3CFB0</color>
+    <color name="colorRoom6">#91C8B1</color>
+    <color name="colorRoom7">#CCBDA8</color>
+    <color name="colorRoom8">#799080</color>
+    <color name="colorRoom9">#A59892</color>
+    <color name="colorRoom10">#A8CA8E</color>
+    <color name="deleteButton">#E9C0C0</color>
+</resources>
