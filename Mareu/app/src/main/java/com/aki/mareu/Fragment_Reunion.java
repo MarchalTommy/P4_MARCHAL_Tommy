@@ -2,13 +2,11 @@ package com.aki.mareu;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,8 +16,9 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
+import com.aki.mareu.databinding.FragmentReunionListBinding;
+import com.aki.mareu.databinding.PopupReuniondetailsBinding;
 import com.aki.mareu.di.DI;
 import com.aki.mareu.events.DeleteReunionEvent;
 import com.aki.mareu.events.FilterByDateEvent;
@@ -29,7 +28,6 @@ import com.aki.mareu.models.Reunion;
 import com.aki.mareu.models.Room;
 import com.aki.mareu.models.User;
 import com.aki.mareu.service.ReunionApiService;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,8 +45,8 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
     Reunion reunion;
 
     //UI
-    RecyclerView mRecyclerView;
-    FloatingActionButton unfilterFab;
+    private FragmentReunionListBinding binding;
+
 
     public static Fragment_Reunion newInstance() {
         return new Fragment_Reunion();
@@ -63,40 +61,39 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_reunion_list, container, false);
-
-        Context context = view.getContext();
-
-        //Prepare the RecyclerView
-        mRecyclerView = view.findViewById(R.id.list_reunions);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(context));
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
         return view;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        binding = FragmentReunionListBinding.bind(view);
         navController = Navigation.findNavController(view);
 
-        FloatingActionButton newReunionFab = view.findViewById(R.id.fab);
-        newReunionFab.setOnClickListener(this);
+        //Prepare the RecyclerView
+        binding.listReunions.setLayoutManager(new LinearLayoutManager(this.getContext()));
+        binding.listReunions.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-        unfilterFab = view.findViewById(R.id.delete_filter_fab);
-        unfilterFab.setVisibility(View.GONE);
-        unfilterFab.setOnClickListener(view1 -> {
+        //Setting the OnClickListener for the FAB to add a new reunion
+        binding.fab.setOnClickListener(this);
+
+        //Setting the FAB to cancel the filter
+        binding.deleteFilterFab.setVisibility(View.GONE);
+        binding.deleteFilterFab.setOnClickListener(view1 -> {
             Fragment_Reunion.this.initList();
-            unfilterFab.setVisibility(View.GONE);
+            binding.deleteFilterFab.setVisibility(View.GONE);
         });
     }
 
     private void initList() {
         mReunions.clear();
         mReunions.addAll(mApiService.getReunions());
-        mRecyclerView.scheduleLayoutAnimation();
-        mRecyclerView.setAdapter(new ReunionRecyclerViewAdapter(mReunions));
+        binding.listReunions.scheduleLayoutAnimation();
+        binding.listReunions.setAdapter(new ReunionRecyclerViewAdapter(mReunions));
         Log.d(TAG, "initList: List initialised  mApiSize : " + mApiService.getReunions().size() + "");
     }
 
+    //OnClick for the FAB to change fragment to add a new reunion
     @Override
     public void onClick(View view) {
         navController.navigate(R.id.action_mainFragment_to_addReunionFragment);
@@ -127,7 +124,7 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
         mApiService.deleteReunion(event.reunion);
         mReunions.remove(event.reunion);
 
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        binding.listReunions.getAdapter().notifyDataSetChanged();
         Toast.makeText(getContext(), "" + event.reunion.getName() + " has been deleted successfully.", Toast.LENGTH_SHORT).show();
     }
 
@@ -137,9 +134,9 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
         mReunions.removeAll(mApiService.filterByDate());
 
         Log.d(TAG, "onFilterByDate: Filter Applied successfully from the API");
-        mRecyclerView.scheduleLayoutAnimation();
-        mRecyclerView.getAdapter().notifyDataSetChanged();
-        unfilterFab.setVisibility(View.VISIBLE);
+        binding.listReunions.scheduleLayoutAnimation();
+        binding.listReunions.getAdapter().notifyDataSetChanged();
+        binding.deleteFilterFab.setVisibility(View.VISIBLE);
     }
 
     @Subscribe
@@ -148,9 +145,9 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
         mReunions.removeAll(mApiService.filterByRoom());
 
         Log.d(TAG, "onFilterByDate: Filter Applied successfully from the API");
-        mRecyclerView.scheduleLayoutAnimation();
-        mRecyclerView.getAdapter().notifyDataSetChanged();
-        unfilterFab.setVisibility(View.VISIBLE);
+        binding.listReunions.scheduleLayoutAnimation();
+        binding.listReunions.getAdapter().notifyDataSetChanged();
+        binding.deleteFilterFab.setVisibility(View.VISIBLE);
     }
 
     @Subscribe
@@ -163,39 +160,32 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
     //Class for the detail popup
     public class DetailPopup extends Dialog {
 
+        private final PopupReuniondetailsBinding popupBinding;
+
         public DetailPopup(Activity activity) {
             super(activity, R.style.Theme_AppCompat_DayNight_Dialog);
-            setContentView(R.layout.popup_reuniondetails);
+            popupBinding = PopupReuniondetailsBinding.inflate(getLayoutInflater());
+            setContentView(popupBinding.getRoot());
         }
 
         public void build() {
             show();
-
             Room mRoom = null;
-            TextView reunionName = findViewById(R.id.reunion_name);
-            TextView creatorName = findViewById(R.id.creator_name);
-            TextView date = findViewById(R.id.date_detail);
-            TextView time = findViewById(R.id.time_detail);
-            TextView room = findViewById(R.id.room_detail);
+            popupBinding.participantsDetailRecyclerview.setLayoutManager(new LinearLayoutManager(this.getContext()));
+            popupBinding.participantsDetailRecyclerview.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
 
-            RecyclerView participantsRV = findViewById(R.id.participants_detail_recyclerview);
-            participantsRV.setLayoutManager(new LinearLayoutManager(this.getContext()));
-            participantsRV.addItemDecoration(new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL));
-
-            reunionName.setText(reunion.getName());
-            creatorName.setText(reunion.getCreator());
-            date.setText(reunion.getDate());
-            time.setText(reunion.getHour());
-
+            popupBinding.reunionName.setText(reunion.getName());
+            popupBinding.creatorName.setText(reunion.getCreator());
+            popupBinding.dateDetail.setText(reunion.getDate());
+            popupBinding.timeDetail.setText(reunion.getHour());
             for (Room r : mApiService.getRooms()) {
                 if (r.getId() == reunion.getRoom()) {
                     mRoom = r;
                 }
             }
-            room.setText(mRoom.getName());
-
+            popupBinding.roomDetail.setText(mRoom.getName());
             List<User> mParticipants = reunion.getParticipants();
-            participantsRV.setAdapter(new DetailRecyclerViewAdapter((ArrayList<User>) mParticipants));
+            popupBinding.participantsDetailRecyclerview.setAdapter(new DetailRecyclerViewAdapter((ArrayList<User>) mParticipants));
         }
     }
 }

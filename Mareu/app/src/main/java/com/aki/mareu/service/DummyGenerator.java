@@ -60,15 +60,18 @@ public abstract class DummyGenerator {
 
     private static List<User> generateRandomParticipants(int n) {
         List<User> users = new LinkedList<>(generateUsers());
-        List <User> randomParticipants = new ArrayList<>();
+        List<User> randomParticipants = new ArrayList<>();
 
-        for(int i = 0 ; i < n ; i++){
+        for (int i = 0; i < n; i++) {
             Random random = new Random();
             int r = random.nextInt(15);
-            if(!randomParticipants.contains(users.get(r))){
-            randomParticipants.add(users.get(r));}
-            else{n++;}
-        }return randomParticipants;
+            if (!randomParticipants.contains(users.get(r))) {
+                randomParticipants.add(users.get(r));
+            } else {
+                n++;
+            }
+        }
+        return randomParticipants;
     }
 
     public static List<Reunion> generateReunions() {

@@ -1,15 +1,11 @@
 package com.aki.mareu.models;
 
-import com.aki.mareu.di.DI;
-import com.aki.mareu.service.ReunionApiService;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
 public class Reunion implements Serializable {
 
-    ReunionApiService mApiService = DI.getReunionApiService();
     /**
      * Identifier
      */

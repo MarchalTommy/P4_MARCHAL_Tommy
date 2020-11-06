@@ -6,7 +6,6 @@ public class AddReunionEvent {
 
     public Reunion reunion;
 
-
     public AddReunionEvent(Reunion reunion) {
         this.reunion = reunion;
     }

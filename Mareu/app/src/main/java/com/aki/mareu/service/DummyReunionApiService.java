@@ -29,15 +29,15 @@ public class DummyReunionApiService implements ReunionApiService {
     }
 
     @Override
-    public void setFilteringDate(String filteringDate){
+    public void setFilteringDate(String filteringDate) {
         this.filteringDate = filteringDate;
     }
 
     @Override
-    public List filterByRoom(){
+    public List filterByRoom() {
         filteredReunion = new ArrayList<>();
-        for(Reunion r : getReunions()){
-            if(r.getRoom() != filteringRoom.getId()){
+        for (Reunion r : getReunions()) {
+            if (r.getRoom() != filteringRoom.getId()) {
                 filteredReunion.add(r);
             }
         }
@@ -47,8 +47,8 @@ public class DummyReunionApiService implements ReunionApiService {
     @Override
     public List filterByDate() {
         filteredReunion = new ArrayList<>();
-        for(Reunion r : getReunions()){
-            if(!r.getDate().equals(filteringDate)){
+        for (Reunion r : getReunions()) {
+            if (!r.getDate().equals(filteringDate)) {
                 filteredReunion.add(r);
             }
         }
