@@ -180,7 +180,7 @@ public class Fragment_AddReunion extends Fragment {
                             0,
                             creatorName.getText().toString(),
                             mParticipants);
-                    EventBus.getDefault().postSticky(new AddReunionEvent(newReunion));
+                    mApiService.createReunion(newReunion);
                     Log.d(TAG, "onViewCreated: Reunion passed successfully to the list");
                     navController.navigate(R.id.action_addReunionFragment_to_mainFragment);
                 }
@@ -197,8 +197,7 @@ public class Fragment_AddReunion extends Fragment {
                             mParticipants.size(),
                             creatorName.getText().toString(),
                             mParticipants);
-
-                    EventBus.getDefault().postSticky(new AddReunionEvent(newReunion));
+                    mApiService.createReunion(newReunion);
                     Log.d(TAG, "onViewCreated: Reunion passed successfully to the list");
                     navController.navigate(R.id.action_addReunionFragment_to_mainFragment);
                 }

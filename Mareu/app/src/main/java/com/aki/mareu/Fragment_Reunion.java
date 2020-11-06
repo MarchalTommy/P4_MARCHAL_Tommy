@@ -21,7 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aki.mareu.di.DI;
-import com.aki.mareu.events.AddReunionEvent;
 import com.aki.mareu.events.DeleteReunionEvent;
 import com.aki.mareu.events.FilterByDateEvent;
 import com.aki.mareu.events.FilterByRoomEvent;
@@ -36,18 +35,20 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class Fragment_Reunion extends Fragment implements View.OnClickListener {
 
     private static final String TAG = "Fragment_ReunionRecycle";
+
     NavController navController = null;
-    Reunion reunion;
+    ReunionApiService mApiService = DI.getReunionApiService();
     List<Reunion> mReunions = new ArrayList<>();
-    private ReunionApiService mApiService = DI.getReunionApiService();
-    private RecyclerView mRecyclerView;
-    private FloatingActionButton unfilterFab;
+    Reunion reunion;
+
+    //UI
+    RecyclerView mRecyclerView;
+    FloatingActionButton unfilterFab;
 
     public static Fragment_Reunion newInstance() {
         return new Fragment_Reunion();
@@ -59,8 +60,7 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_reunion_list, container, false);
 
@@ -78,26 +78,23 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
         super.onViewCreated(view, savedInstanceState);
         navController = Navigation.findNavController(view);
 
-
         FloatingActionButton newReunionFab = view.findViewById(R.id.fab);
         newReunionFab.setOnClickListener(this);
 
         unfilterFab = view.findViewById(R.id.delete_filter_fab);
         unfilterFab.setVisibility(View.GONE);
-        unfilterFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view1) {
-                Fragment_Reunion.this.initList();
-                unfilterFab.setVisibility(View.GONE);
-            }
+        unfilterFab.setOnClickListener(view1 -> {
+            Fragment_Reunion.this.initList();
+            unfilterFab.setVisibility(View.GONE);
         });
     }
 
     private void initList() {
-        mReunions = new LinkedList<>(mApiService.getReunions());
+        mReunions.clear();
+        mReunions.addAll(mApiService.getReunions());
         mRecyclerView.scheduleLayoutAnimation();
         mRecyclerView.setAdapter(new ReunionRecyclerViewAdapter(mReunions));
-        Log.d(TAG, "initList: List initialised");
+        Log.d(TAG, "initList: List initialised  mApiSize : " + mApiService.getReunions().size() + "");
     }
 
     @Override
@@ -120,6 +117,8 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
     @Override
     public void onStop() {
         super.onStop();
+        mApiService = DI.getNewInstanceApiService();
+        mReunions.clear();
         EventBus.getDefault().unregister(this);
     }
 
@@ -127,6 +126,7 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
     public void onDeleteReunion(DeleteReunionEvent event) {
         mApiService.deleteReunion(event.reunion);
         mReunions.remove(event.reunion);
+
         mRecyclerView.getAdapter().notifyDataSetChanged();
         Toast.makeText(getContext(), "" + event.reunion.getName() + " has been deleted successfully.", Toast.LENGTH_SHORT).show();
     }
@@ -153,13 +153,6 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
         unfilterFab.setVisibility(View.VISIBLE);
     }
 
-    //Sticky car le fragment est en arrière plan lors de l'appel a l'event
-    @Subscribe(sticky = true)
-    public void onAddReunionEvent(AddReunionEvent event) {
-        mApiService.createReunion(event.reunion);
-        Toast.makeText(this.getContext(), "The new reunion has been added to the list", Toast.LENGTH_SHORT).show();
-    }
-
     @Subscribe
     public void onReunionDetail(GetReunionDetail event) {
         reunion = event.reunion;
@@ -167,6 +160,7 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
         popup.build();
     }
 
+    //Class for the detail popup
     public class DetailPopup extends Dialog {
 
         public DetailPopup(Activity activity) {
