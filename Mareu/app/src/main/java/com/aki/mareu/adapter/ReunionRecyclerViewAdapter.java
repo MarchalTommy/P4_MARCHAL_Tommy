@@ -1,4 +1,4 @@
-package com.aki.mareu;
+package com.aki.mareu.adapter;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.widget.ImageViewCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.aki.mareu.R;
 import com.aki.mareu.databinding.FragmentReunionBinding;
 import com.aki.mareu.events.DeleteReunionEvent;
 import com.aki.mareu.events.GetReunionDetail;

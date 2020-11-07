@@ -21,6 +21,7 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.aki.mareu.adapter.ParticipantsRecyclerViewAdapter;
 import com.aki.mareu.databinding.FragmentAddreunionBinding;
 import com.aki.mareu.di.DI;
 import com.aki.mareu.events.ParticipantsEvent;

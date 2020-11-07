@@ -1,4 +1,4 @@
-package com.aki.mareu;
+package com.aki.mareu.adapter;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;

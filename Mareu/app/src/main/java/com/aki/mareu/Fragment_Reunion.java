@@ -17,6 +17,8 @@ import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import com.aki.mareu.adapter.DetailRecyclerViewAdapter;
+import com.aki.mareu.adapter.ReunionRecyclerViewAdapter;
 import com.aki.mareu.databinding.FragmentReunionListBinding;
 import com.aki.mareu.databinding.PopupReuniondetailsBinding;
 import com.aki.mareu.di.DI;
