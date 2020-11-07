@@ -2,8 +2,7 @@
 ## Rendu du projet 4 : Application de gestion de réunion Maréu
 
 Dans ce projet, j'ai tenu à apprendre et utiliser les **Navigation Components** pour la navigation
-    par fragment et n'avoir qu'une seule activitée comme le préconisait Google récemment, ainsi que le **ViewBinding** malgré 
-    mes difficultées à l'utiliser à certains endroits, ce qui m'a forcé à utiliser **findViewById();** à la place.
+    par fragment et n'avoir qu'une seule activitée comme le préconisait Google récemment, ainsi que le **ViewBinding** à la place de **findViewById();**.
 
 J'ai décidé d'utiliser aussi les **dialog** afin de rendre l'utilisation de l'app plus User Friendly et plus sobre/belle 
     de mon point de vue.
