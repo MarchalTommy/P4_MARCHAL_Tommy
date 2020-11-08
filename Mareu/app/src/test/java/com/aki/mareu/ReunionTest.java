@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertFalse;
@@ -43,27 +44,15 @@ public class ReunionTest {
     @Test
     public void addReunionWithSuccess() {
         List<Reunion> reunions = service.getReunions();
-        List<Reunion> expectedReunions = DummyGenerator.DUMMY_REUNIONS;
-
-        assertTrue(expectedReunions.containsAll(reunions));
-
         service.createReunion(new Reunion(666, "reunionTest", DummyGenerator.DUMMY_ROOMS.get(0), "13H37", "01/01/2021", 15, "Akimitsu", service.getUsers()));
-
-        reunions = service.getReunions();
-        assertFalse(expectedReunions.containsAll(reunions));
+        assertTrue(reunions.size()>DummyGenerator.generateReunions().size());
     }
 
     @Test
     public void filterReunionByDateWithSuccess() {
-        List<Reunion> reunions = service.getReunions();
-        List<Reunion> expectedReunions = DummyGenerator.DUMMY_REUNIONS;
-
-        assertTrue(reunions.containsAll(expectedReunions));
-
+        List<Reunion> reunions = new ArrayList<>();
         String filteringDate = "12/10/2020";
-        service.setFilteringDate(filteringDate);
-        reunions.removeAll(service.filterByDate());
-
+        reunions.addAll(service.filterByDate(filteringDate));
         for (Reunion r : reunions) {
             assertTrue(r.getDate().equals(filteringDate));
         }
@@ -71,15 +60,9 @@ public class ReunionTest {
 
     @Test
     public void filterReunionByRoomWithSuccess() {
-        List<Reunion> reunions = service.getReunions();
-        List<Reunion> expectedReunions = DummyGenerator.DUMMY_REUNIONS;
-
-        assertTrue(reunions.containsAll(expectedReunions));
-
+        List<Reunion> reunions = new ArrayList<>();
         Room filteringRoom = service.getRooms().get(2);
-        service.setFilteringRoom(filteringRoom);
-        reunions.removeAll(service.filterByRoom());
-
+        reunions.addAll(service.filterByRoom(filteringRoom));
         for (Reunion r : reunions) {
             assertTrue(r.getRoom() == filteringRoom.getId());
         }

@@ -8,13 +8,9 @@ import java.util.List;
 
 public interface ReunionApiService {
 
-    void setFilteringRoom(Room filteringRoom);
+    List<Reunion> filterByRoom(Room room);
 
-    void setFilteringDate(String filteringDate);
-
-    List<Reunion> filterByRoom();
-
-    List<Reunion> filterByDate();
+    List<Reunion> filterByDate(String date);
 
     long getNewId();
 

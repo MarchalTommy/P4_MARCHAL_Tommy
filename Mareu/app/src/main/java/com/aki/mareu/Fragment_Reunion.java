@@ -116,8 +116,6 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
     @Override
     public void onStop() {
         super.onStop();
-        mApiService = DI.getNewInstanceApiService();
-        mReunions.clear();
         EventBus.getDefault().unregister(this);
     }
 
@@ -132,8 +130,8 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
 
     @Subscribe
     public void onFilterByDate(FilterByDateEvent event) {
-        mApiService.setFilteringDate(event.date);
-        mReunions.removeAll(mApiService.filterByDate());
+        mReunions.clear();
+        mReunions.addAll(mApiService.filterByDate(event.date));
 
         Log.d(TAG, "onFilterByDate: Filter Applied successfully from the API");
         binding.listReunions.scheduleLayoutAnimation();
@@ -143,8 +141,8 @@ public class Fragment_Reunion extends Fragment implements View.OnClickListener {
 
     @Subscribe
     public void onFilterByRoom(FilterByRoomEvent event) {
-        mApiService.setFilteringRoom(event.room);
-        mReunions.removeAll(mApiService.filterByRoom());
+        mReunions.clear();
+        mReunions.addAll(mApiService.filterByRoom(event.room));
 
         Log.d(TAG, "onFilterByDate: Filter Applied successfully from the API");
         binding.listReunions.scheduleLayoutAnimation();

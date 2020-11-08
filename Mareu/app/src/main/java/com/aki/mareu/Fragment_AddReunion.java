@@ -35,6 +35,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -43,7 +45,7 @@ public class Fragment_AddReunion extends Fragment {
 
     NavController navController = null;
     ReunionApiService mApiService = DI.getReunionApiService();
-    List<User> mParticipants;
+    List<User> mParticipants = new ArrayList<>();
 
     //Ui
     private FragmentAddreunionBinding binding;
@@ -141,48 +143,69 @@ public class Fragment_AddReunion extends Fragment {
         });
     }
 
+    public void getNewParticipants() {
+        String newParticipants;
+        newParticipants = binding.newParticipant.getText().toString();
+        if (!newParticipants.isEmpty()) {
+            String[] mails = newParticipants.split("\n");
+            int nbrNewParticipants = mails.length;
+            for (String s : mails) {
+                int nameEnd = s.indexOf("@");
+                mParticipants.add(new User(mApiService.getNewId(), s.substring(0, nameEnd), s));
+            }
+            for (User u : mParticipants) {
+                System.out.println(u.getName());
+            }
+        }
+    }
+
+    public List antiDoublon(List list) {
+        Collection<User> NoDuplicate = new HashSet<>(list);
+        System.out.println("No duplicates = " + NoDuplicate);
+        List<User> noDuplicateParticipants = new ArrayList<>();
+        noDuplicateParticipants.addAll(NoDuplicate);
+        return noDuplicateParticipants;
+    }
+
     public void createReunion() {
         binding.createNewReunionButton.setOnClickListener(view1 -> {
             Room room = null;
-            for (Room r : mApiService.getRooms()) {
-                if (r.getName().equals(binding.roomSpinnerNewReunion.getSelectedItem().toString())) {
-                    room = r;
-                }
-            }
-            if (mParticipants == null) {
-                if (binding.nameEdittext.getText().toString().isEmpty() || binding.timeEdittext.getText().toString().isEmpty() || binding.dateEdittext.getText().toString().isEmpty() || binding.creatornameEdittext.getText().toString().isEmpty()) {
-                    Toast.makeText(this.getContext(), "Please fill up every field to create a new reunion.", Toast.LENGTH_LONG).show();
-                } else {
-                    Reunion newReunion = new Reunion(
-                            mApiService.getNewId(),
-                            binding.nameEdittext.getText().toString(),
-                            room,
-                            binding.timeEdittext.getText().toString(),
-                            binding.dateEdittext.getText().toString(),
-                            0,
-                            binding.creatornameEdittext.getText().toString(),
-                            mParticipants);
-                    mApiService.createReunion(newReunion);
-                    Log.d(TAG, "onViewCreated: Reunion passed successfully to the list");
-                    navController.navigate(R.id.action_addReunionFragment_to_mainFragment);
-                }
-            } else {
-                if (binding.nameEdittext.getText().toString().isEmpty() || binding.timeEdittext.getText().toString().isEmpty() || binding.dateEdittext.getText().toString().isEmpty() || binding.creatornameEdittext.getText().toString().isEmpty()) {
-                    Toast.makeText(this.getContext(), "Please fill up every field to create a new reunion.", Toast.LENGTH_LONG).show();
-                } else {
-                    Reunion newReunion = new Reunion(
-                            mApiService.getNewId(),
-                            binding.nameEdittext.getText().toString(),
-                            room,
-                            binding.timeEdittext.getText().toString(),
-                            binding.dateEdittext.getText().toString(),
-                            mParticipants.size(),
-                            binding.creatornameEdittext.getText().toString(),
-                            mParticipants);
-                    mApiService.createReunion(newReunion);
-                    Log.d(TAG, "onViewCreated: Reunion passed successfully to the list");
-                    navController.navigate(R.id.action_addReunionFragment_to_mainFragment);
-                }
+            getNewParticipants();
+            switch (binding.roomSpinnerNewReunion.getSelectedItem().toString()) {
+                case "Select a room":
+                    Toast.makeText(this.getContext(), "Your reunion need to have a room !", Toast.LENGTH_SHORT).show();
+                    break;
+                default:
+                    for (Room r : mApiService.getRooms()) {
+                        if (r.getId() == binding.roomSpinnerNewReunion.getSelectedItemPosition()) {
+                            room = r;
+                        }
+                    }
+                    if (binding.nameEdittext.getText().toString().isEmpty()) {
+                        Toast.makeText(this.getContext(), "Your reunion needs to have a name.", Toast.LENGTH_SHORT).show();
+                    } else if (binding.dateEdittext.getText().toString().isEmpty()) {
+                        Toast.makeText(this.getContext(), "Please pick a date.", Toast.LENGTH_SHORT).show();
+                    } else if (binding.timeEdittext.getText().toString().isEmpty()) {
+                        Toast.makeText(this.getContext(), "You need to specify when your reunion's gonna takes place.", Toast.LENGTH_SHORT).show();
+                    } else if (binding.creatornameEdittext.getText().toString().isEmpty()) {
+                        Toast.makeText(this.getContext(), "Your coworkers needs to know who wants this reunion.", Toast.LENGTH_SHORT).show();
+                    } else if (mParticipants == null || mParticipants.isEmpty()) {
+                        Toast.makeText(this.getContext(), "Your reunion needs to have someone participating !", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Reunion newReunion = new Reunion(
+                                mApiService.getNewId(),
+                                binding.nameEdittext.getText().toString(),
+                                room,
+                                binding.timeEdittext.getText().toString(),
+                                binding.dateEdittext.getText().toString(),
+                                mParticipants.size(),
+                                binding.creatornameEdittext.getText().toString(),
+                                antiDoublon(mParticipants));
+                        mApiService.createReunion(newReunion);
+                        Log.d(TAG, "onViewCreated: Reunion passed successfully to the list");
+                        navController.navigate(R.id.action_addReunionFragment_to_mainFragment);
+                        break;
+                    }
             }
         });
     }

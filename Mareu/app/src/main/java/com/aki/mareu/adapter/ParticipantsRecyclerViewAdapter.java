@@ -68,6 +68,7 @@ public class ParticipantsRecyclerViewAdapter extends RecyclerView.Adapter<Partic
                         mParticipants.remove(user);
                     }
                     EventBus.getDefault().post(new ParticipantsEvent(mParticipants));
+                    System.out.println(mParticipants.size());
                 }
             });
         }

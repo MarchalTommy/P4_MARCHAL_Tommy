@@ -13,31 +13,19 @@ public class DummyReunionApiService implements ReunionApiService {
     /**
      * Generate a new ID
      */
-    long newId = new Random().nextInt(1000);
+    long newId;
 
     private List<Reunion> reunions = DummyGenerator.generateReunions();
     private List<User> users = DummyGenerator.generateUsers();
     private List<Room> rooms = DummyGenerator.generateRooms();
 
     public List<Reunion> filteredReunion;
-    private Room filteringRoom = null;
-    private String filteringDate = null;
 
     @Override
-    public void setFilteringRoom(Room filteringRoom) {
-        this.filteringRoom = filteringRoom;
-    }
-
-    @Override
-    public void setFilteringDate(String filteringDate) {
-        this.filteringDate = filteringDate;
-    }
-
-    @Override
-    public List filterByRoom() {
+    public List filterByRoom(Room room) {
         filteredReunion = new ArrayList<>();
         for (Reunion r : getReunions()) {
-            if (r.getRoom() != filteringRoom.getId()) {
+            if (r.getRoom() == room.getId()) {
                 filteredReunion.add(r);
             }
         }
@@ -45,10 +33,10 @@ public class DummyReunionApiService implements ReunionApiService {
     }
 
     @Override
-    public List filterByDate() {
+    public List filterByDate(String date) {
         filteredReunion = new ArrayList<>();
         for (Reunion r : getReunions()) {
-            if (!r.getDate().equals(filteringDate)) {
+            if (r.getDate().equals(date)) {
                 filteredReunion.add(r);
             }
         }
@@ -57,6 +45,7 @@ public class DummyReunionApiService implements ReunionApiService {
 
     @Override
     public long getNewId() {
+        newId = new Random().nextInt(1000);
         return newId;
     }
 

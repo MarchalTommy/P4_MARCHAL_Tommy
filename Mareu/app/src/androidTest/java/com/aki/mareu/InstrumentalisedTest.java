@@ -5,6 +5,7 @@ import android.view.ViewGroup;
 import android.view.ViewParent;
 
 import androidx.test.espresso.DataInteraction;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
@@ -139,6 +140,10 @@ public class InstrumentalisedTest {
         onView(withId(R.id.creatorname_edittext))
                 .perform(click())
                 .perform(typeText("Admin"))
+                .perform(ViewActions.closeSoftKeyboard());
+
+        onView(withId(R.id.new_participant))
+                .perform(typeText("NewParticipant@SdZ.fr"))
                 .perform(ViewActions.closeSoftKeyboard());
 
         onView(withId(R.id.create_new_reunion_button))
