@@ -24,7 +24,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.aki.mareu.adapter.ParticipantsRecyclerViewAdapter;
 import com.aki.mareu.databinding.FragmentAddreunionBinding;
 import com.aki.mareu.di.DI;
-import com.aki.mareu.events.ParticipantsEvent;
+import com.aki.mareu.events.AddParticipantEvent;
+import com.aki.mareu.events.RemoveParticipantEvent;
 import com.aki.mareu.models.Reunion;
 import com.aki.mareu.models.Room;
 import com.aki.mareu.models.User;
@@ -35,8 +36,6 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -159,12 +158,17 @@ public class Fragment_AddReunion extends Fragment {
         }
     }
 
-    public List antiDoublon(List list) {
+ /*   public List antiDoublon(List list) {
         Collection<User> NoDuplicate = new HashSet<>(list);
         System.out.println("No duplicates = " + NoDuplicate);
         List<User> noDuplicateParticipants = new ArrayList<>();
         noDuplicateParticipants.addAll(NoDuplicate);
         return noDuplicateParticipants;
+    }*/
+
+    public List<User> getParticpantsList() {
+
+        return mParticipants;
     }
 
     public void createReunion() {
@@ -173,7 +177,7 @@ public class Fragment_AddReunion extends Fragment {
             getNewParticipants();
             switch (binding.roomSpinnerNewReunion.getSelectedItem().toString()) {
                 case "Select a room":
-                    Toast.makeText(this.getContext(), "Your reunion need to have a room !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this.getContext(), "You cannot create a reunion without selecting a room.", Toast.LENGTH_SHORT).show();
                     break;
                 default:
                     for (Room r : mApiService.getRooms()) {
@@ -182,15 +186,15 @@ public class Fragment_AddReunion extends Fragment {
                         }
                     }
                     if (binding.nameEdittext.getText().toString().isEmpty()) {
-                        Toast.makeText(this.getContext(), "Your reunion needs to have a name.", Toast.LENGTH_SHORT).show();
+                        binding.nameEdittext.setError("Your reunion needs to have a name.");
                     } else if (binding.dateEdittext.getText().toString().isEmpty()) {
-                        Toast.makeText(this.getContext(), "Please pick a date.", Toast.LENGTH_SHORT).show();
+                        binding.dateEdittext.setError("You need to choose a date for your reunion.");
                     } else if (binding.timeEdittext.getText().toString().isEmpty()) {
-                        Toast.makeText(this.getContext(), "You need to specify when your reunion's gonna takes place.", Toast.LENGTH_SHORT).show();
+                        binding.timeEdittext.setError("Please select a time as to when you reunion is gonna takes place.");
                     } else if (binding.creatornameEdittext.getText().toString().isEmpty()) {
-                        Toast.makeText(this.getContext(), "Your coworkers needs to know who wants this reunion.", Toast.LENGTH_SHORT).show();
+                        binding.creatornameEdittext.setError("You must enter your name");
                     } else if (mParticipants == null || mParticipants.isEmpty()) {
-                        Toast.makeText(this.getContext(), "Your reunion needs to have someone participating !", Toast.LENGTH_SHORT).show();
+                        binding.newParticipant.setError("Please add at least 1 participant.");
                     } else {
                         Reunion newReunion = new Reunion(
                                 mApiService.getNewId(),
@@ -200,7 +204,7 @@ public class Fragment_AddReunion extends Fragment {
                                 binding.dateEdittext.getText().toString(),
                                 mParticipants.size(),
                                 binding.creatornameEdittext.getText().toString(),
-                                antiDoublon(mParticipants));
+                                getParticpantsList());
                         mApiService.createReunion(newReunion);
                         Log.d(TAG, "onViewCreated: Reunion passed successfully to the list");
                         navController.navigate(R.id.action_addReunionFragment_to_mainFragment);
@@ -235,9 +239,14 @@ public class Fragment_AddReunion extends Fragment {
     }
 
     @Subscribe
-    public void onAddParticipants(ParticipantsEvent event) {
+    public void onAddParticipant(AddParticipantEvent event) {
         Log.d(TAG, "onAddParticipants: Event called successfully");
-        mParticipants = event.participants;
+        mParticipants.add(event.participant);
+    }
+
+    @Subscribe
+    public void onDeleteParticipant(RemoveParticipantEvent event) {
+        mParticipants.remove(event.participant);
     }
 
     class TimeListener implements TimePickerDialog.OnTimeSetListener {

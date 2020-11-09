@@ -7,7 +7,8 @@ import android.widget.CompoundButton;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.aki.mareu.databinding.FragmentParticipantsBinding;
-import com.aki.mareu.events.ParticipantsEvent;
+import com.aki.mareu.events.AddParticipantEvent;
+import com.aki.mareu.events.RemoveParticipantEvent;
 import com.aki.mareu.models.User;
 
 import org.greenrobot.eventbus.EventBus;
@@ -59,17 +60,10 @@ public class ParticipantsRecyclerViewAdapter extends RecyclerView.Adapter<Partic
 
         public void bind(final User user) {
             binding.participantName.setText(user.getName());
-            binding.checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (compoundButton.isChecked()) {
-                        mParticipants.add(user);
-                    } else {
-                        mParticipants.remove(user);
-                    }
-                    EventBus.getDefault().post(new ParticipantsEvent(mParticipants));
-                    System.out.println(mParticipants.size());
-                }
+            binding.checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
+                if (b) EventBus.getDefault().post(new AddParticipantEvent(user));
+                 else EventBus.getDefault().post(new RemoveParticipantEvent(user));
+
             });
         }
     }

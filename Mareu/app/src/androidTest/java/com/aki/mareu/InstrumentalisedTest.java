@@ -7,6 +7,7 @@ import android.view.ViewParent;
 import androidx.test.espresso.DataInteraction;
 import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.ViewInteraction;
+import androidx.test.espresso.action.ScrollToAction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.contrib.RecyclerViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -26,6 +27,8 @@ import org.junit.runners.MethodSorters;
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.scrollTo;
+import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.RootMatchers.isPlatformPopup;
@@ -119,9 +122,6 @@ public class InstrumentalisedTest {
                         isDisplayed()));
         appCompatSpinner.perform(click());
 
-        // Added a sleep statement to match the app's execution delay.
-        // The recommended way to handle such scenarios is to use Espresso idling resources:
-        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
         try {
             Thread.sleep(250);
         } catch (InterruptedException e) {
@@ -149,7 +149,9 @@ public class InstrumentalisedTest {
 
         onView(withId(R.id.name_edittext))
                 .perform(click())
-                .perform(typeText("Test Reunion"));
+                .perform(typeText("Test Reunion"))
+                .perform(ViewActions.closeSoftKeyboard())
+                .perform(swipeUp());
 
         onView(withId(R.id.creatorname_edittext))
                 .perform(click())
@@ -160,7 +162,11 @@ public class InstrumentalisedTest {
                 .perform(typeText("NewParticipant@SdZ.fr"))
                 .perform(ViewActions.closeSoftKeyboard());
 
+        onView(withId(R.id.second_cardview))
+                .perform(swipeUp());
+
         onView(withId(R.id.create_new_reunion_button))
+                .perform(scrollTo())
                 .perform(click());
 
         onView(withId(R.id.list_reunions))
@@ -176,7 +182,7 @@ public class InstrumentalisedTest {
                 .perform(click());
 
         onView(withId(R.id.radio_date))
-                .perform(click());
+                .perform(click(), swipeUp());
 
         onView(withId(R.id.filter_date_button))
                 .perform(click());
