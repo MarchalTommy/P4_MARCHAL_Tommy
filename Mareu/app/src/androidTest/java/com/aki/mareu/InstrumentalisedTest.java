@@ -109,13 +109,27 @@ public class InstrumentalisedTest {
         onView(withId(R.id.fab))
                 .perform(click());
 
-        onView(withId(R.id.room_spinner_newReunion))
-                .perform(click());
+        ViewInteraction appCompatSpinner = onView(
+                allOf(withId(R.id.room_spinner_newReunion),
+                        childAtPosition(
+                                childAtPosition(
+                                        withId(R.id.first_cardview),
+                                        0),
+                                1),
+                        isDisplayed()));
+        appCompatSpinner.perform(click());
+
+        // Added a sleep statement to match the app's execution delay.
+        // The recommended way to handle such scenarios is to use Espresso idling resources:
+        // https://google.github.io/android-testing-support-library/docs/espresso/idling-resource/index.html
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         DataInteraction appCompatCheckedTextView = onData(anything())
-                .inAdapterView(childAtPosition(
-                        withClassName(is("android.widget.PopupWindow$PopupBackgroundView")),
-                        0))
+                .inAdapterView(withClassName(is("androidx.appcompat.widget.DropDownListView")))
                 .atPosition(3);
         appCompatCheckedTextView.perform(click());
 
