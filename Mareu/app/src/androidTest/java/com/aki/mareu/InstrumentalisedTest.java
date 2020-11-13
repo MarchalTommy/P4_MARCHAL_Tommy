@@ -130,7 +130,7 @@ public class InstrumentalisedTest {
                                 childAtPosition(
                                         withId(R.id.first_cardview),
                                         0),
-                                1),
+                                2),
                         isDisplayed()));
         appCompatSpinner.perform(click());
 
