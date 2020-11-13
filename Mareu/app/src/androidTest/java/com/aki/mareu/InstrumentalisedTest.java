@@ -15,14 +15,23 @@ import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
 import androidx.test.runner.AndroidJUnit4;
 
+import com.aki.mareu.di.DI;
+import com.aki.mareu.models.Reunion;
+import com.aki.mareu.service.ReunionApiService;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
+import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
@@ -45,6 +54,9 @@ import static org.hamcrest.Matchers.is;
 @RunWith(AndroidJUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class InstrumentalisedTest {
+
+    ReunionApiService mApiService = DI.getNewInstanceApiService();
+
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityTestRule = new ActivityTestRule<>(MainActivity.class);
@@ -178,6 +190,23 @@ public class InstrumentalisedTest {
     @Test
     public void C_filteringByDate() {
 
+        //Création d'une réunion à la date du jour
+        final Calendar cldr = Calendar.getInstance();
+        int day = cldr.get(Calendar.DAY_OF_MONTH);
+        int month = cldr.get(Calendar.MONTH);
+        int year = cldr.get(Calendar.YEAR);
+
+        String dayFormatted = String.valueOf(day);
+        String monthFormatted = String.valueOf(month+1);
+        if (day<10) {
+            dayFormatted = "0" + day;
+        }
+        if(month<9) {
+            monthFormatted = "0" + month;
+        }
+        mApiService.createReunion(new Reunion(mApiService.getNewId(), "Test Reunion", mApiService.getRooms().get(2), "10:00", dayFormatted+"/"+monthFormatted+"/"+year, 1, "Test", mApiService.getUsers()));
+
+        //Test du filtre par date à la date du jour
         onView(withId(R.id.action_filter))
                 .perform(click());
 
@@ -194,6 +223,9 @@ public class InstrumentalisedTest {
 
     @Test
     public void D_filteringByRoom() {
+
+        mApiService.createReunion(new Reunion(mApiService.getNewId(), "Test Reunion", mApiService.getRooms().get(2), "10:00", "13/08/1996", mApiService.getUsers().size(), "Test", mApiService.getUsers()));
+
 
         onView(withId(R.id.action_filter))
                 .perform(click());

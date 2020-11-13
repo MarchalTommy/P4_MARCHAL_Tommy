@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".Fragment_AddReunion">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -24,6 +25,16 @@
                 android:layout_height="match_parent">
 
                 <TextView
+                    android:id="@+id/disclaimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please fill up every field to create a reunion"
+                    android:textStyle="italic"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
                     android:id="@+id/roomTextview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -33,7 +44,7 @@
                     android:textStyle="bold"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toBottomOf="@id/disclaimer" />
 
                 <Spinner
                     android:id="@+id/room_spinner_newReunion"

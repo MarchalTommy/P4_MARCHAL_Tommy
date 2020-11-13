@@ -1,15 +1,21 @@
 package com.aki.mareu;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -45,6 +51,8 @@ public class Fragment_AddReunion extends Fragment {
     NavController navController = null;
     ReunionApiService mApiService = DI.getReunionApiService();
     List<User> mParticipants = new ArrayList<>();
+    public AlertDialog dialog = null;
+    Activity activity;
 
     //Ui
     private FragmentAddreunionBinding binding;
@@ -60,6 +68,7 @@ public class Fragment_AddReunion extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        activity  = getActivity();
     }
 
     @Override
@@ -81,17 +90,6 @@ public class Fragment_AddReunion extends Fragment {
 
         //Room Selection
         binding.roomSpinnerNewReunion.setAdapter(adapter);
-        binding.roomSpinnerNewReunion.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String text = adapterView.getItemAtPosition(i).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
 
         //Users participating RecyclerView
         binding.participantsRecyclerview.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -158,26 +156,48 @@ public class Fragment_AddReunion extends Fragment {
         }
     }
 
- /*   public List antiDoublon(List list) {
-        Collection<User> NoDuplicate = new HashSet<>(list);
-        System.out.println("No duplicates = " + NoDuplicate);
-        List<User> noDuplicateParticipants = new ArrayList<>();
-        noDuplicateParticipants.addAll(NoDuplicate);
-        return noDuplicateParticipants;
-    }*/
-
     public List<User> getParticpantsList() {
-
         return mParticipants;
     }
 
+    private AlertDialog errorDialog() {
+        Context context;
+        final AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this.getContext());
+
+        alertBuilder.setTitle("Error");
+        alertBuilder.setPositiveButton("Ok", null);
+        alertBuilder.setMessage("In order to create a reunion, please fill up every field. You forgot to choose a room.");
+
+        dialog = alertBuilder.create();
+
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
+            @Override
+            public void onShow(DialogInterface dialogInterface) {
+
+                Button button = dialog.getButton(androidx.appcompat.app.AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        dialogInterface.dismiss();
+                    }
+                });
+            }
+        });
+
+        return dialog;
+    }
+
     public void createReunion() {
+        Toast.makeText(activity,"THIS IS A TEST PLEASE WORK", Toast.LENGTH_LONG).show();
         binding.createNewReunionButton.setOnClickListener(view1 -> {
             Room room = null;
             getNewParticipants();
-            switch (binding.roomSpinnerNewReunion.getSelectedItem().toString()) {
+            switch (binding.roomSpinnerNewReunion.getSelectedItem().toString().trim()) {
                 case "Select a room":
-                    Toast.makeText(this.getContext(), "You cannot create a reunion without selecting a room.", Toast.LENGTH_SHORT).show();
+                    final AlertDialog dialog = errorDialog();
+                    dialog.show();
                     break;
                 default:
                     for (Room r : mApiService.getRooms()) {
